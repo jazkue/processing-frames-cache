@@ -1,2 +1,2 @@
 # processing-frames-cache
-cache and loop animated sequences in Processing using frames from folders in the "data" folder
+cache and loop image sequences in Processing using frames from subfolders in the "data" folder
