@@ -1,4 +1,4 @@
-// cache and loop animated sequences in Processing using frames from folders in the "data" folder
+// cache and loop animated sequences in Processing using frames from subfolders in the "data" folder
 
 import java.util.Date;
 Sequence [] sequence = new Sequence[3];
