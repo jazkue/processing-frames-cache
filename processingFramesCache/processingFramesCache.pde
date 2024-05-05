@@ -8,8 +8,11 @@ void setup() {
   //size(1920, 1080);
   frameRate(10);
   background(0);
-  sequence[0] = new Sequence("capybara", 0.25);
-  sequence[1] = new Sequence("ostrich", 0.50);
+  sequence[0] = new Sequence("capybara");
+  //sequence[0].crop(315,0,1060,1060);
+  sequence[0].resizeSequence(0.25);
+  sequence[1] = new Sequence("ostrich");
+  sequence[1].resizeSequence(0.50);
 }
 
 void draw() {
@@ -56,18 +59,36 @@ class Sequence {
   int w, h;
   int timecode = 0;
 
-  Sequence(String seq_name, float scale) {
-    scale = 1/scale;
+  Sequence(String seq_name) {
     String folder = sketchPath() + "/data/" + seq_name + "/";
     StringList listOfFrames = listFrames(folder);
-    println(listOfFrames);
+    //println(listOfFrames);
     frame = new PImage[listOfFrames.size()];
     for (int i = 0; i < frame.length; i++) {
       frame[i] = loadImage(listOfFrames.get(i));
-      frame[i].resize(int(frame[i].width/scale), int(frame[i].height/scale));
     }
     w = frame[0].width;
     h = frame[0].height;
+    println(seq_name, w+"x"+h);
+  }
+
+  void resizeSequence(float scale) {
+    scale = 1/scale;
+    for (int i = 0; i < frame.length; i++) {
+      frame[i].resize(int(frame[i].width/scale), int(frame[i].height/scale));
+      w = frame[0].width;
+      h = frame[0].height;
+    }
+  }
+
+  void crop(int x, int y, int w, int h) {
+    for (int i = 0; i < frame.length; i++) {
+      PImage crop = new PImage();
+      crop = frame[i].get(x, y, w, h);
+      frame[i] = crop;
+      w = frame[0].width;
+      h = frame[0].height;
+    }
   }
 
   void runTimecode() {
