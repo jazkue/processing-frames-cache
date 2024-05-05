@@ -10,30 +10,30 @@ void setup() {
   background(0);
   sequence[0] = new Sequence("capybara");
   //sequence[0].crop(315,0,1060,1060);
-  sequence[0].resizeSequence(0.025);
+  sequence[0].resizeSequence(0.25);
   sequence[1] = new Sequence("ostrich");
-  sequence[1].resizeSequence(0.050);
+  sequence[1].resizeSequence(0.50);
 }
 
 void draw() {
   sequence[0].runTimecode();
-  for (int i = 0; i <= width/sequence[0].w; i++) {
-    int pos = i*sequence[0].w;
-    sequence[0].playWithOffset(pos, 0, i);
-    int h = sequence[0].h + sequence[1].h;
-    sequence[0].playWithOffset(pos, h, i);
-    sequence[0].playWithOffset(pos, h*2, i);
-  }
-
   sequence[1].runTimecode();
-  for (int i = 0; i <= width/sequence[1].w; i++) {
-    int pos = i*sequence[1].w;
-    sequence[1].playWithOffset(pos, sequence[0].h, i);
-    int h = sequence[0].h + sequence[1].h + sequence[0].h;
-    sequence[1].playWithOffset(pos, h, i);
+  
+  int totalHeight = sequence[0].h + sequence[1].h;
+  for (int j = 0; j < height; j += totalHeight) {
+    pushMatrix();
+    translate(0, j);
+    for (int i = 0; i <= width/sequence[0].w; i++) {
+      int pos = i*sequence[0].w;
+      sequence[0].playWithOffset(pos, 0, i);
+    }
+    for (int i = 0; i <= width/sequence[1].w; i++) {
+      int pos = i*sequence[1].w;
+      sequence[1].playWithOffset(pos, sequence[0].h, i);
+    }
+    popMatrix();
   }
 }
-
 
 StringList listFrames(String dir) {
   String exts [] = {"jpg", "jpeg", "png", "gif", "tiff"};
