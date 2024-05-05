@@ -10,9 +10,9 @@ void setup() {
   background(0);
   sequence[0] = new Sequence("capybara");
   //sequence[0].crop(315,0,1060,1060);
-  sequence[0].resizeSequence(0.25);
+  sequence[0].resizeSequence(0.025);
   sequence[1] = new Sequence("ostrich");
-  sequence[1].resizeSequence(0.50);
+  sequence[1].resizeSequence(0.050);
 }
 
 void draw() {
@@ -102,7 +102,10 @@ class Sequence {
 
   void playWithOffset(float x, float y, int offset) {
     int frameNumber = timecode + offset;
-    if (frameNumber >= frame.length) frameNumber = frameNumber - frame.length;
+    if (frameNumber >= frame.length) {
+      int multiply = int(frameNumber/frame.length);
+      frameNumber = frameNumber - (frame.length * multiply);
+    }
     image(frame[frameNumber], x, y);
   }
 }
