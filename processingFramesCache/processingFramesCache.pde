@@ -1,31 +1,33 @@
-// cache and loop an animated sequence in Processing using frames from the "data" folder
+// cache and loop animated sequences in Processing using frames from folders in the "data" folder
 
 import java.util.Date;
-PImage [] frame;
 int timeCode = 0;
+Sequence [] sequence = new Sequence[3];
 
 void setup() {
-  size(1920, 1080);
-  frameRate(10);
+  fullScreen();
+  //size(1920, 1080);
+  frameRate(15);
   background(0);
-
-  String folder = sketchPath() + "/data/";
-  StringList listOfFrames = listFrames(folder);
-  print(listOfFrames);
-  frame = new PImage[listOfFrames.size()];
-  for (int i = 0; i < frame.length; i++) {
-    frame[i] = loadImage(listOfFrames.get(i));
-  }
+  sequence[0] = new Sequence("capybara", 0.25);
+  sequence[1] = new Sequence("ostrich", 0.50);
 }
 
 void draw() {
-  translate(-frame[0].width/2, -frame[0].height/2);
-  translate(width/2, height/2);
-  image(frame[timeCode], 0, 0);
-  translate(-frame[0].width/2, -frame[0].height/2);
+  sequence[0].runTimecode();
+  for (int i = 0; i < width; i += sequence[0].w) {
+    sequence[0].play(i, 0);
+    int h = sequence[0].h + sequence[1].h;
+    sequence[0].play(i, h);
+    sequence[0].play(i, h*2);
+  }
 
-  timeCode++;
-  if (timeCode == frame.length) timeCode = 0;
+  sequence[1].runTimecode();
+  for (int i = 0; i < width; i += sequence[1].w) {
+    sequence[1].play(i, sequence[0].h);
+    int h = sequence[0].h + sequence[1].h + sequence[0].h;
+    sequence[1].play(i, h);
+  }
 }
 
 
@@ -45,5 +47,34 @@ StringList listFrames(String dir) {
     return fileNames;
   } else {
     return null;
+  }
+}
+
+class Sequence {
+  PImage [] frame;
+  int w, h;
+  int timeCode = 0;
+
+  Sequence(String seq_name, float scale) {
+    scale = 1/scale;
+    String folder = sketchPath() + "/data/" + seq_name + "/";
+    StringList listOfFrames = listFrames(folder);
+    println(listOfFrames);
+    frame = new PImage[listOfFrames.size()];
+    for (int i = 0; i < frame.length; i++) {
+      frame[i] = loadImage(listOfFrames.get(i));
+      frame[i].resize(int(frame[i].width/scale), int(frame[i].height/scale));
+    }
+    w = frame[0].width;
+    h = frame[0].height;
+  }
+
+  void runTimecode() {
+    timeCode++;
+    if (timeCode == frame.length) timeCode = 0;
+  }
+
+  void play(float x, float y) {
+    image(frame[timeCode], x, y);
   }
 }
