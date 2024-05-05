@@ -1,13 +1,12 @@
 // cache and loop animated sequences in Processing using frames from folders in the "data" folder
 
 import java.util.Date;
-int timeCode = 0;
 Sequence [] sequence = new Sequence[3];
 
 void setup() {
   fullScreen();
   //size(1920, 1080);
-  frameRate(15);
+  frameRate(10);
   background(0);
   sequence[0] = new Sequence("capybara", 0.25);
   sequence[1] = new Sequence("ostrich", 0.50);
@@ -15,18 +14,20 @@ void setup() {
 
 void draw() {
   sequence[0].runTimecode();
-  for (int i = 0; i < width; i += sequence[0].w) {
-    sequence[0].play(i, 0);
+  for (int i = 0; i <= width/sequence[0].w; i++) {
+    int pos = i*sequence[0].w;
+    sequence[0].playWithOffset(pos, 0, i);
     int h = sequence[0].h + sequence[1].h;
-    sequence[0].play(i, h);
-    sequence[0].play(i, h*2);
+    sequence[0].playWithOffset(pos, h, i);
+    sequence[0].playWithOffset(pos, h*2, i);
   }
 
   sequence[1].runTimecode();
-  for (int i = 0; i < width; i += sequence[1].w) {
-    sequence[1].play(i, sequence[0].h);
+  for (int i = 0; i <= width/sequence[1].w; i++) {
+    int pos = i*sequence[1].w;
+    sequence[1].playWithOffset(pos, sequence[0].h, i);
     int h = sequence[0].h + sequence[1].h + sequence[0].h;
-    sequence[1].play(i, h);
+    sequence[1].playWithOffset(pos, h, i);
   }
 }
 
@@ -53,7 +54,7 @@ StringList listFrames(String dir) {
 class Sequence {
   PImage [] frame;
   int w, h;
-  int timeCode = 0;
+  int timecode = 0;
 
   Sequence(String seq_name, float scale) {
     scale = 1/scale;
@@ -70,11 +71,17 @@ class Sequence {
   }
 
   void runTimecode() {
-    timeCode++;
-    if (timeCode == frame.length) timeCode = 0;
+    timecode++;
+    if (timecode == frame.length) timecode = 0;
   }
 
   void play(float x, float y) {
-    image(frame[timeCode], x, y);
+    image(frame[timecode], x, y);
+  }
+
+  void playWithOffset(float x, float y, int offset) {
+    int frameNumber = timecode + offset;
+    if (frameNumber >= frame.length) frameNumber = frameNumber - frame.length;
+    image(frame[frameNumber], x, y);
   }
 }
