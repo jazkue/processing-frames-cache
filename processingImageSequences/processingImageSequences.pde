@@ -9,20 +9,22 @@ void setup() {
   frameRate(10);
   background(0);
   sequence[0] = new Sequence("capybara");
-  //sequence[0].crop(315,0,1060,1060);
-  sequence[0].resizeSequence(0.25);
+  sequence[0].crop(0, 0, 1280, 720);
+  //sequence[0].resizeSequence(0.25);
   sequence[1] = new Sequence("ostrich");
-  sequence[1].resizeSequence(0.50);
+  sequence[1].resizeSequence(3);
+  sequence[1].crop(0, 0, 1280, 720);
 }
 
 void draw() {
   sequence[0].runTimecode();
   sequence[1].runTimecode();
-  
+
   int totalHeight = sequence[0].h + sequence[1].h;
   for (int j = 0; j < height; j += totalHeight) {
     pushMatrix();
     translate(0, j);
+    println(sequence[0].w);
     for (int i = 0; i <= width/sequence[0].w; i++) {
       int pos = i*sequence[0].w;
       sequence[0].playWithOffset(pos, 0, i);
@@ -44,7 +46,9 @@ StringList listFrames(String dir) {
     for (int i = 0; i < dirList.length; i ++)
       for (int j = 0; j < exts.length; j ++) {
         if (dirList[i].indexOf(exts[j]) >= 0) {
-          fileNames.append(dir + dirList[i]);
+          if (dirList[i].indexOf("._") < 0) {
+            fileNames.append(dir + dirList[i]);
+          }
         }
       }
     fileNames.sort();
@@ -81,14 +85,13 @@ class Sequence {
     }
   }
 
-  void crop(int x, int y, int w, int h) {
+  void crop(int x, int y, int wCrop, int hCrop) {
     for (int i = 0; i < frame.length; i++) {
-      PImage crop = new PImage();
-      crop = frame[i].get(x, y, w, h);
+      PImage crop = frame[i].get(x, y, wCrop, hCrop);
       frame[i] = crop;
-      w = frame[0].width;
-      h = frame[0].height;
     }
+    w = frame[0].width;
+    h = frame[0].height;
   }
 
   void runTimecode() {
