@@ -9,11 +9,11 @@ void setup() {
   frameRate(10);
   background(0);
   sequence[0] = new Sequence("capybara");
-  sequence[0].crop(0, 0, 1280, 720);
-  //sequence[0].resizeSequence(0.25);
+  //sequence[0].crop(0, 0, 1280, 720);
+  sequence[0].resizeSequence(0.25);
   sequence[1] = new Sequence("ostrich");
-  sequence[1].resizeSequence(3);
-  sequence[1].crop(0, 0, 1280, 720);
+  sequence[1].resizeSequence(0.5);
+  //sequence[1].crop(0, 0, 1280, 720);
 }
 
 void draw() {
@@ -80,6 +80,14 @@ class Sequence {
     scale = 1/scale;
     for (int i = 0; i < frame.length; i++) {
       frame[i].resize(int(frame[i].width/scale), int(frame[i].height/scale));
+      w = frame[0].width;
+      h = frame[0].height;
+    }
+  }
+
+  void resizeSequence(int newX, int newY) {
+    for (int i = 0; i < frame.length; i++) {
+      frame[i].resize(newX, newY);
       w = frame[0].width;
       h = frame[0].height;
     }
